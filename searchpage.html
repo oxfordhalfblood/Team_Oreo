@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>NoDupli</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+    <!-- Navbar -->
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="index.html">
+                <img src="img/Logo.png">
+            </a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" class="usernameBtn">UserName</a></li>
+            <li><a href="#" class="logoutBtn">Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+  
+<div class="container" id="mainForm">
+ <form class="form-horizontal" action="">
+    <div class="form-group" id="targetLanguage">
+      <label class="control-label col-sm-2">Select Target Language:</label>
+      <div class="col-sm-10">
+        <select class="form-control" id="languageselect">
+            <option>English</option>
+            <option>French</option>
+        </select>
+
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2">Upload File:</label>
+      <div class="col-sm-10"> 
+        <!-- <fieldset disabled><input type="text" placeholder="Upload docx or pdf file" class="form-control"></fieldset> -->
+        <input type="file" name="doc" accept=".pdf,.docx">
+      </div>
+    </div>
+    <div class="form-group"> 
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-default">Check</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+</body>
+</html>
