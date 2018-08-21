@@ -1,0 +1,23 @@
+nav .navbar-brand img{
+    height: 180px;
+    margin-left:40px;
+}
+
+nav{
+    height:200px;
+}
+
+.nav{
+    margin-top:140px;
+    margin-right:20px;
+}
+
+.form-control{
+    width:auto;
+}
+
+form{
+    margin-top:90px;
+    margin-left:300px;
+    width:800px;
+}
