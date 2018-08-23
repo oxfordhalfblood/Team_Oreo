@@ -1,19 +1,15 @@
 nav .navbar-brand img{
-    height: 180px;
-    margin-left:40px;
+    padding:0px;
+    margin-top:0px;
 }
 
 nav{
-    height:200px;
+    height: 85px;
 }
 
-.nav{
-    margin-top:140px;
-    margin-right:20px;
-}
 
 .form-control{
-    width:auto;
+    width:140px;
 }
 
 form{
