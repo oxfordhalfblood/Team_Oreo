@@ -1,0 +1,212 @@
+body {
+    padding-top: 90px;
+}
+.container-fluid{
+	background-color: #07418c;
+}
+.navbar-header{
+	background-color: #07418c;
+    border-color: #E7E7E7;
+}
+.navbar-inverse.navbar-fixed-to .navbar-header > li > a:hover, .navbar-inverse.navbar-fixed-to .navbar-header > a:focus {
+    background-color: #FFFF00;
+    color: #FFC0CB;
+}
+.navbar-brand {
+  padding: 0px;
+}
+.navbar-brand>img {
+  height: 110%;
+  padding: 10px;
+  width: auto;
+}
+.glyphicon.glyphicon-user{
+	padding-right: 15px;
+	font-size: 20px;
+	color: #fff;
+
+}
+
+.fa.fa-caret-down{
+	font-size:28px;
+	color:#fff;
+}
+
+.panel-login {
+	border-color: #ccc;
+	-webkit-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+	-moz-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+	box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+}
+
+.panel-login>.panel-heading {
+	color: #00415d;
+	background-color: #fff;
+	border-color: #fff;
+	text-align:center;
+}
+
+.panel-login>.panel-heading a{
+	text-decoration: none;
+	color: #666;
+	font-weight: bold;
+	font-size: 15px;
+	-webkit-transition: all 0.1s linear;
+	-moz-transition: all 0.1s linear;
+	transition: all 0.1s linear;
+}
+
+.panel-login>.panel-heading a.active{
+	color: #07418c;
+	font-size: 18px;
+}
+
+.panel-login>.panel-heading hr{
+	margin-top: 10px;
+	margin-bottom: 0px;
+	clear: both;
+	border: 0;
+	height: 1px;
+	background-image: -webkit-linear-gradient(left,rgba(0, 0, 0, 0),rgba(0, 0, 0, 0.15),rgba(0, 0, 0, 0));
+	background-image: -moz-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
+	background-image: -ms-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
+	background-image: -o-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
+}
+.panel-login input[type="text"],.panel-login input[type="email"],.panel-login input[type="password"] {
+	height: 45px;
+	border: 1px solid #ddd;
+	font-size: 16px;
+	-webkit-transition: all 0.1s linear;
+	-moz-transition: all 0.1s linear;
+	transition: all 0.1s linear;
+}
+.panel-login input:hover,
+.panel-login input:focus {
+	outline:none;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	border-color: #ccc;
+}
+.dropdown.btn-group{
+    background-color: ##064ca7;
+	outline: none;
+	color: #fff;
+	font-size: 14px;
+	height: auto;
+	width: auto;
+	font-weight: normal;
+	padding: 14px 0;
+	text-transform: uppercase;
+	border-color: #59B2E6;
+	margin-top: 10px;
+}
+.btn.btn-secondary.btn-lg.dropdown-toggle{
+    background-color: #07418c;
+	outline: none;
+	color: #fff;
+	font-size: 14px;
+	height: auto;
+	width: 200px;
+	font-weight: normal;
+	padding: 14px 0;
+	text-transform: uppercase;
+	margin-top: 10px;
+	
+}
+
+.dropdown-menu.settings{
+	clear:right;
+    float:left;
+	text-align:center;
+	position:absolute;
+}
+
+.dropdown.btn-group>.dropdown-menu{
+	clear:left;
+    float:right;
+	text-align:center;
+	position:relative;
+	left: -10%;
+    right: -10%;
+}
+
+.dropdown-menu:hover,
+.dropdown-menu:focus {
+	color: #fff;
+	border-color: #07418c;
+}
+
+#dropdown-menu>ul>li{
+   display:inline-block;
+
+    margin-left: auto;       /* This is when the drop down box appears */
+
+    position: relative;
+}
+.menuitem{
+background-color: #07418c;
+
+}
+.dropdown-menu>li>a:hover{
+	background-color: #dcead6;
+}
+.btn-login {
+	background-color: #07418c;
+	outline: none;
+	color: #fff;
+	font-size: 14px;
+	height: auto;
+	font-weight: normal;
+	padding: 14px 0;
+	text-transform: uppercase;
+	border-color: #07418c;
+}
+.btn-login:hover,
+.btn-login:focus {
+	color: #fff;
+	background-color: #07418c;
+	border-color: #07418c;
+}
+.form-group.text-center{
+		margin-top: 10px;
+		overflow: auto;
+
+}
+
+.forgot-password {
+	text-decoration: underline;
+	color: #888;
+}
+.forgot-password:hover,
+.forgot-password:focus {
+	text-decoration: underline;
+	color: #666;
+}
+
+.btn-register {
+	background-color: #07418c;
+	outline: none;
+	color: #fff;
+	font-size: 14px;
+	height: auto;
+	font-weight: normal;
+	padding: 14px 0;
+	text-transform: uppercase;
+	border-color: #07418c;
+}
+.btn-register:hover,
+.btn-register:focus {
+	color: #fff;
+	background-color: #062e63;
+	border-color: #07418c;
+}
+.btn.btn-info{
+    background-color: #07418c;
+    border-color: #07418c;
+}
+#save .btn.btn-info{
+	margin-left: 75px;
+    background-color: #07418c;
+    border-color: #07418c;
+}
