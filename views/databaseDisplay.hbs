@@ -1,0 +1,15 @@
+
+<h1> {{ title }}</h1>
+<p>Welcome to {{ title }} </p>
+
+<h2>Username | fname | lname | type | Password</h2>
+<table>
+    {{#each anyArray }}
+        <tr>
+            <td>
+                {{ this }}
+            </td>
+        </tr>
+    {{/each}}
+</table>
+
