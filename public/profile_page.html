@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+	<script  type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+
+	<script  type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link href="css/profile_page.css" rel="stylesheet">
+	<script  type="text/javascript" src="js/profile_page.js"> </script>
+	
+</head>
+<!------ Include the above in your HEAD tag ---------->
+
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="login_signup.html">
+      	 <img src="img/Logo.png" class="img-fluid" alt="My responsive image.">
+      </a>
+    </div>
+
+
+    <ul class="nav navbar-nav navbar-right">
+      <li class="nav-item"><a href="#">
+          <span class="glyphicon glyphicon-user"></span>
+        </a></li>
+
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-caret-down"></i></a>
+            <ul class="dropdown-menu settings" id="settings-dropdown">
+              <li><a href="">Homepage</a></li>
+              <li><a href="">Document</a></li>
+              <li><a href="">Settings</a></li>
+              <li><a href="">About</a></li>
+              <li><a href="">Logout</a></li>
+            </ul>
+          </li>
+
+      
+        </ul>
+  </div> 
+</nav>
+
+<!-- <button type="button" class="btn btn-primary">Change Password</button> -->
+<!-- Document Page -->
+<div id="searchTable">
+<!-- Search Form (text field and button) -->
+<form>
+  <div class="form-group">
+	<label for="searchField">Search Documents</label>
+	<input type="search" class="form-control" id="search"placeholder="Search">
+  </div>
+  <button type="submit" class="btn btn-primary">Search</button>
+</form>
+<!-- Document Table -->
+<table class="table table-striped">
+  <thead>
+	<tr>
+	  <th scope="col">Document</th>
+	  <th scope="col">Upload Date</th>
+	  <th scope="col">Similarity</th>
+	</tr>
+  </thead>
+  <tbody>
+	<tr>
+	  <td><a href="#" onclick="LoadFile(20);">Assignment 1</a></td>
+	  <td>01/01/2018</td>
+	  <td>20%</td>
+	</tr>
+	<tr>
+	  <td><a href="#" onclick="LoadFile(30);">Assignment 2</a></td>
+	  <td>01/01/2018</td>
+	  <td>30%</td>
+	</tr>
+	<tr>
+	  <td><a href="#" onclick="LoadFile(50);">Assignment 3</a></td>
+	  <td>01/01/2018</td>
+	  <td>50%</td>
+	</tr>
+  </tbody>
+</table>
+</div>
+
+<!-- document comparison table -->
+<div id="docComparison" style="display:none">
+	<div id="similarity">Similarity 50%</div>
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Source</th>
+				<th>Target</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					text in the source document
+				</td>
+				<td>
+					text in the target document
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<button type="button" onclick="ToggleTables();"class="btn btn-primary">Back</button>
+</div>
+  </body>
+</html>
