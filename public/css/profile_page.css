@@ -74,7 +74,7 @@ body {
 	border-color: #ccc;
 }
 .dropdown.btn-group{
-    background-color: ##064ca7;
+    background-color: #064ca7;
 	outline: none;
 	color: #fff;
 	font-size: 14px;
@@ -114,7 +114,7 @@ body {
 	
 	border-color: #07418c;
 }
-##dropdown-menu>ul>li{
+#dropdown-menu>ul>li{
    display:inline-block;
 
     margin-left: auto;       /* This is when the drop down box appears */

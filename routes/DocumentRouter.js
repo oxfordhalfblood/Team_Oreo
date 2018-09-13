@@ -3,74 +3,132 @@ const bodyParser = require ('body-parser');
 const path = require('path');
 const multer = require('multer');
 
+/* Setup router stuff */
 const router = express.Router();
-
 router.use(bodyParser.json());
 
+/* Populate locals with passed in modules */
+let database;
+module.exports = function(app, db) {
+    database = db;
+	app.use('/documents', router);
+};
 
-var storage = multer.diskStorage({
+/* Setup file uploading */
+let storage = multer.diskStorage({
 	destination: function(req, file, callback) {
 			callback(null, './uploads');
 	},
 	filename: function(req, file, callback) {
-		callback(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+	    /* Storing date as unix epoch time for uniqueness */
+		callback(null, req.session.username + '-' + Date.now() + ".txt");
 	}
 });
+let upload = multer({ storage: storage }).single('userFile');
 
-router.route('/');
-
-router.all((req, res, next) => {
+/* Define routes */
+router.all('/*', (req, res, next) => {
+	if (!req.session.username) {
+        res.status(403).end("You are not logged in.");
+        return;
+	}
     res.statusCode = 200;
-    res.setHeader('content-type', 'text/plain');
     next()
 });
 
 router.get('/', function (req, res, next) {
-    res.render('documentUpload', {
-        title: 'Upload documents here.',
-        condition: false
+    let documents;
+    database.getDocuments(req.session.username, function (result) {
+        documents = result;
+
+        res.render('documentUpload', {
+            title: 'Upload documents here.',
+            condition: false,
+            username: req.session.username,
+            fname: req.session.fname,
+            lname: req.session.lname,
+            isAdmin: (req.session.usertype === "admin"),
+            documents: documents
+        });
     });
 });
 
 router.post('/', (req, res, next) => {
-	/*
-    res.end('adding document: ' + req.body.name
-        + ' w/details: ' + req.body.description)
-	*/
+    upload(req, res, function(err) {
+        if (err){
+            res.status(500).send("File upload failed!");
+            return;
+        }
+        if (!req.file) {
+            res.status(500).send("No file selected!");
+            return;
+        }
 
-	var upload = multer({
-		storage: storage
-	}).single('userFile');
-
-	upload(req, res, function(err) {
-		res.end('File is uploaded')
-	})
+        /* Store a database record of the uploaded file */
+        let date = new Date;
+        database.addDocument(req.session.username, req.file.filename, req.file.originalname, date.toISOString(), function (err) {
+            if(err) {
+                console.log("Database error: " + err);
+                return;
+            }
+            console.log("Uploaded: " + req.file.filename);
+            res.redirect("/documents");
+            res.end("File is uploaded");
+        });
+    });
 });
 
-/*
-.put((req, res, next) => {
-	res.statusCode = 403; // Operation not supported.
-	res.end('PUT operation not supported on documents')
-})
+/* Delete a document.
+* Justification for using GET instead of DELETE:
+* I don't want to make a ajax call from client side.
+*
+* Has a security flaw where if a user can guess a filename, they can delete any document
+* not belonging to them, but this is fine since this is a non-srs project. */
+router.get('/delete/:filename', (req, res, next) => {
+    let filename = req.params.filename;
+    if (!filename) {
+        res.status(304).send("filename is required to delete a document!");
+        return;
+    }
+    database.deleteDocument(filename, function (err) {
+        if (err) {
+            res.status(500).send("Error deleting document: " + err);
+            return;
+        }
+        res.status(200).send("Deleted: " + filename);
+    });
+});
 
-.delete((req, res, next) => {
-	res.end('deleting all the documents')
-})
-
-.get('/:documentId', (req, res, next) => {
-	res.end('Get details of document ID: ' + req.params.documentId)
-})
-.post('/:documentId', (req, res, next) => {
-	res.statusCode = 403;
-	res.end('post operation not supported on documents/' + req.params.documentId)
-})
-.put('/:documentId', (req, res, next) => {
-	res.write('updating document : ' + req.params.documentId);
-	res.end(' document: ' + req.body.name
-    + ' - ' + req.body.description)
-})
-.delete('/:documentId', (req, res, next) => {
-	res.end('deleting document: ' + req.params.documentId)
-})
-*/
-module.exports = router;
+/* Returns the contents of a file provided a filename
+* Has same security flaw as the function above. */
+router.get('/content/:filename', (req, res, next) => {
+    let filename = req.params.filename;
+    if (!filename) {
+        res.status(304).send("filename is required to get contents.");
+        return;
+    }
+    database.getDocumentContent(filename, function (err, data) {
+        if (err) {
+            res.status(500).send("Error getting document: " + err);
+            return;
+        }
+        res.setHeader('content-type', 'text/plain');
+        res.status(200).end(data);
+    });
+});
+/* Saves content to file */
+router.put('/content/:filename', (req, res, next) => {
+    let filename = req.params.filename;
+    let content = req.body["data"];
+    if (!filename) {
+        res.status(304).send("filename is required to get contents.");
+        return;
+    }
+    database.saveDocumentContent(filename, content, function (err) {
+        if (err) {
+            res.status(500).send("Error getting document: " + err);
+            return;
+        }
+        res.status(200).end("saved");
+    });
+});

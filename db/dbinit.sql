@@ -20,7 +20,8 @@ CREATE TABLE USER(
 CREATE TABLE DOCUMENT(
 	username	VARCHAR(10)     NOT NULL,
 	filename	VARCHAR(300)    NOT NULL,
-	dateupld	DATE            NOT NULL,
+	oldfilename	VARCHAR(300)    NOT NULL,
+	dateupld	VARCHAR(20)		NOT NULL,
 	CONSTRAINT DOCUMENT_FKEY FOREIGN KEY(username) REFERENCES USER(username),
     CONSTRAINT DOCUMENT_PKEY PRIMARY KEY(filename, username),
     CONSTRAINT DOCUMENT_UNIQUE UNIQUE(filename));
@@ -31,9 +32,9 @@ CREATE TABLE DOCUMENT(
 INSERT INTO USERTYPE(usertype) VALUES("admin");
 INSERT INTO USERTYPE(usertype) VALUES("student");
 
-INSERT INTO USER(username, fname, lname, usertype, passwd) VALUES("ia000", "ifran", "ali", "admin", "ifran000");
-INSERT INTO USER(username, fname, lname, usertype, passwd) VALUES("jd002", "john", "doe", "student", "john001");
-INSERT INTO USER(username, fname, lname, usertype, passwd) VALUES("dj003", "darryl", "jamieson", "student", "dj002");
+INSERT INTO USER(username, fname, lname, usertype, passwd) VALUES("ia000", "ifran", "A", "admin", "ifran000");
+INSERT INTO USER(username, fname, lname, usertype, passwd) VALUES("jd002", "john", "D", "student", "john001");
+INSERT INTO USER(username, fname, lname, usertype, passwd) VALUES("dj003", "darryl", "J", "student", "dj002");
 
 INSERT INTO DOCUMENT(username, filename, dateupld) VALUES("dj003", "dj003_20180818.txt", '2018-08-18');
 INSERT INTO DOCUMENT(username, filename, dateupld) VALUES("dj003", "dj003_20180814.txt", '2018-08-14');
