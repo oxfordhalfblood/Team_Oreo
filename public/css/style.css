@@ -1,77 +1,54 @@
+/* THIS CSS IS APPLIED ON ALL PAGES!! */
 
-.form-control{
-    width:240px;
+.navbar-brand>img {
+    height: 100%;
+    padding: 0px;
+    width: auto;
+}
+a.navbar-brand {
+    padding: 0px;
 }
 
-form{
-    margin-top:90px;
-    margin-left:300px;
-    width:800px;
+.container-fluid{
+    background-color: #07418c;
+}
+.navbar-header{
+    background-color: #07418c;
+    border-color: #E7E7E7;
 }
 
-/*
-css for three-column-structures*/
-
-.app_page1 {
-  margin:30px;
-  overflow: hidden;
-  height:100%;
-
+.nav>li>a {
+    color: white;
+}
+.nav>li>a:hover {
+    background-color: #0E69DE !important;
+}
+.nav>li>a:active {
+    background-color: #0E69DE !important;
 }
 
-@media (min-width: 768px){
-  #left {
-    position: absolute;
-    top: 0px;
-    bottom: 0;
-    left: 0;
-    width: 15%;
-    overflow-y: scroll; 
-  }
-
-  #middle {
-    position: absolute;
-    top: 0px;
-    bottom: 0;
-    left: 15%;
-    width: 15%;
-    overflow-y: scroll; 
-  }
-  
-  #right {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    overflow-y: scroll;
-    width: 70%;
-  }
+.glyphicon.glyphicon-user{
+    color: #fff;
 }
 
-#left {
-  background-color: #FC6E51;
-  text-align: center;
-  height:100%;
+.fa.fa-caret-down{
+    font-size:28px;
+    color:#fff;
 }
 
-#middle{
-  background-color: lightgreen;
-  text-align: center;
-  height:100%;
-}
+/* Colorise buttons */
+.btn{
+    background-color: #07418c !important;
+    border-color: #07418c !important;
+    color: white !important;
 
-#right {
-  height:100%;
-  background-color: #4FC1E9;
-  text-align: center;
-}
+    padding: 14px !important;
+    height: auto !important;
 
-h4{
-  padding: 10px 0; 
+    text-transform: uppercase;
 }
-
-.tool-card{
-  border: 2px solid black;
-  padding: 10px 10px;
-  margin: 10px 0;
+.btn:hover, .btn:focus {
+    color: #fff;
+    background-color: #062e63 !important;
+    border-color: #07418c !important;
 }

@@ -1,12 +1,47 @@
 
-<h1> {{ title }}</h1>
-<p>Welcome to {{ title }} </p>
+<script  type="text/javascript" src="/js/DocumentsPage.js"> </script>
 
+<h1> {{ title }}</h1>
+<p> {{ title }} </p>
+
+<h3>Upload a new document</h3>
 <div>
     <form id="uploadForm" enctype="multipart/form-data" method="post">
-        <input type="file" name="userFile" />
+        <input type="file" name="userFile" accept="text/plain"/>
         <input type="submit" value="Upload File" name="submit">
     </form>
 </div>
 
-<script src="js/upload.js"></script>
+<h3>Uploads</h3>
+<!-- Documents Table -->
+<div id="docTable">
+    <table class="table table-striped" style="width:100%;">
+        <thead>
+        <tr>
+            <th scope="col">Document</th>
+            <th scope="col">Upload Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#if documents }}
+            {{#each documents }}
+                <tr>
+                    <td><a href="#" onclick="LoadFile('{{this.filename}}');">{{this.oldfilename}}</a></td>
+                    <td>{{this.date}}</td>
+                    <td><a href="/documents/delete/{{this.filename}}">Remove</a></td>
+                    <td><a href="/documents/content/{{this.filename}}">view</a></td>
+                </tr>
+            {{/each}}
+        {{/if}}
+        </tbody>
+    </table>
+
+</div>
+
+<!-- document Editor -->
+<div id="docEditor" style="display:none">
+    <textarea id="documentContent" type="text" rows="20" style="width:100%;"></textarea>
+
+    <button type="button" onclick="ToggleTables();"class="btn btn-primary">Back</button>
+    <button type="button" onclick="saveContents();"class="btn btn-primary">Save</button>
+</div>

@@ -1,0 +1,29 @@
+<h1>{{ title }}</h1>
+<!--
+see all user names, password and email in a table.
+
+uploaded documents of each user (maybe clicking on user name can take to that user's profile) @shane is doing user profile page
+
+remove a user from the system. Button "remove user" on the table
+
+make another user admin. Button "make admin"
+-->
+
+<table class="table table-striped">
+    <tr>
+        <th>Username</th>
+        <th>Firstname</th>
+        <th>Lastname</th>
+        <th>Usertype</th>
+        <th>Password</th>
+    </tr>
+    {{#each users }}
+        <tr>
+            <td>{{ this.username }} </td>
+            <td>{{ this.fname }}    </td>
+            <td>{{ this.lname }}    </td>
+            <td>{{ this.usertype }} </td>
+            <td>{{ this.passwd }}   </td>
+        </tr>
+    {{/each}}
+</table>
