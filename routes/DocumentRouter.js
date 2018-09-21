@@ -56,6 +56,7 @@ router.get('/', function (req, res, next) {
 router.post('/', (req, res, next) => {
     upload(req, res, function(err) {
         if (err){
+            console.log(err);
             res.status(500).send("File upload failed!");
             return;
         }
