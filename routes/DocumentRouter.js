@@ -3,6 +3,15 @@ const bodyParser = require ('body-parser');
 const path = require('path');
 const multer = require('multer');
 
+//copyleaks credentials
+var email = 'nipeshkc7@gmail.com';
+var apikey = 'AF14A871-CA6B-4FC9-8B78-38835EF0668F';
+
+//For the use of Copyleaks node sdk
+var CopyleaksCloud = require('plagiarism-checker');
+var clCloud = new CopyleaksCloud();
+var config = clCloud.getConfig();
+
 /* Setup router stuff */
 const router = express.Router();
 router.use(bodyParser.json());
@@ -67,14 +76,32 @@ router.post('/', (req, res, next) => {
 
         /* Store a database record of the uploaded file */
         let date = new Date;
-        database.addDocument(req.session.username, req.file.filename, req.file.originalname, date.toISOString(), function (err) {
-            if(err) {
-                console.log("Database error: " + err);
-                return;
-            }
-            console.log("Uploaded: " + req.file.filename);
-            res.redirect("/documents");
-            res.end("File is uploaded");
+
+        clCloud.login(email,apikey,config.E_PRODUCT.Education,function (resp,err){
+            //Setting headers
+            var _customHeaders = {};
+            _customHeaders[config.SANDBOX_MODE_HEADER] = true; // Sandbox mode - Scan without consuming any credits and get back dummy results
+
+            /* Create a process using a file  */
+            clCloud.createByFile('./uploads/'+req.file.filename,_customHeaders,function(resp,err){
+                if(resp && resp.ProcessId){
+                    console.log('API: create-by-file');
+                    console.log('Process has been created: '+resp.ProcessId);
+                    //updating transaction Id to database
+                    database.addDocument(req.session.username, req.file.filename, req.file.originalname, date.toISOString(),resp.ProcessId, function (err) {
+                        if(err) {
+                            console.log("Database error: " + err);
+                            return;
+                        }
+                        console.log("Uploaded: " + req.file.filename);
+                        res.redirect("/documents");
+                        res.end("File is uploaded");
+                    });
+                }
+                    if(!isNaN(err))
+                        console.log('Error: ' + err);
+            });
+
         });
     });
 });

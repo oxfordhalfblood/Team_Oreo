@@ -14,9 +14,9 @@ function Dbhelper() {
 }
 
 /* Functions on DOCUMENT table */
-Dbhelper.prototype.addDocument = function(username, filename, oldfilename, date, callback) {
-    let sql = "insert into DOCUMENT (username, filename, oldfilename, dateupld) VALUES (?, ?, ?, ?);";
-    let values = [username, filename, oldfilename, date];
+Dbhelper.prototype.addDocument = function(username, filename, oldfilename, date, transactionId, callback) {
+    let sql = "insert into DOCUMENT (username, filename, oldfilename, dateupld, transactionId) VALUES (?, ?, ?, ?,?);";
+    let values = [username, filename, oldfilename, date, transactionId];
 
     db.serialize(function() {
         db.run(sql, values, callback);
