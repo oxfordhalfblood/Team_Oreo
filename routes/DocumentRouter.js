@@ -49,7 +49,6 @@ router.get('/', function (req, res, next) {
     let documents;
     database.getDocuments(req.session.username, function (result) {
         documents = result;
-
         res.render('documentUpload', {
             title: 'Upload documents here.',
             condition: false,
@@ -159,4 +158,23 @@ router.put('/content/:filename', (req, res, next) => {
         }
         res.status(200).end("saved");
     });
+});
+
+//shows plagarism results
+router.get('/showresults/:transactionId', (req, res, next) => {
+    let transactionId = req.params.transactionId;
+    if (!transactionId) {
+        res.status(304).send("transactionId is required to get contents.");
+        return;
+    }
+    clCloud.login(email,apikey,config.E_PRODUCT.Education,function getStatusCallback(resp,err){
+        clCloud.getProcessResults(transactionId,function(statusResp,err){
+            console.log(statusResp);
+            //res.setHeader('content-type', 'text/plain');
+            res.status(200).end(JSON.stringify(statusResp));
+            //res.write()
+            if(!isNaN(err))
+            console.log('Error: ' + err);
+        });         
+    } );
 });
