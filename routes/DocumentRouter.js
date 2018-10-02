@@ -56,7 +56,10 @@ router.get('/', function (req, res, next) {
             fname: req.session.fname,
             lname: req.session.lname,
             isAdmin: (req.session.usertype === "admin"),
-            documents: documents
+            documents: documents,
+            // helpers: {
+            //     encodeU: function (url) { return encodeURIComponent(url); },
+            // }
         });
     });
 });
@@ -161,20 +164,84 @@ router.put('/content/:filename', (req, res, next) => {
 });
 
 //shows plagarism results
-router.get('/showresults/:transactionId', (req, res, next) => {
+router.get('/showresults/:transactionId&:filename', (req, res, next) => {
     let transactionId = req.params.transactionId;
+    let filename= req.params.filename;
     if (!transactionId) {
         res.status(304).send("transactionId is required to get contents.");
         return;
     }
+    database.getDocumentContent(filename, function (err, data) {
+        clCloud.login(email,apikey,config.E_PRODUCT.Education,function getStatusCallback(resp,err){
+            clCloud.getProcessResults(transactionId,function(statusResp,err){
+                //console.log("Original status Response"+ statusResp);
+                //let result=JSON.stringify(statusResp);
+                //res.setHeader('content-type', 'text/plain');
+                //res.status(200).end(JSON.stringify(statusResp));
+                clCloud.getComparisonReport(statusResp[0].ComparisonReport,function(comparisonResp,err){
+                    //console.log(JSON.stringify(comparisonResp));
+                    clCloud.getResultRawText(statusResp[0].CachedVersion,function(rawTextResp,err){
+                        //console.log('Result raw text: ' + JSON.stringify(rawTextResp));
+                        //render results here 
+                    res.render('resultspage', {
+                        title: 'Plagiarism Results',
+                        condition: false,
+                        username: req.session.username,
+                        fname: req.session.fname,
+                        lname: req.session.lname,
+                        responseArray: statusResp,
+                        comparisonArray: comparisonResp,
+                        rawText:rawTextResp,
+                        fileName:filename,
+                        sourceText:data,
+                        helpers: {
+                            encodeU: function (url) { return encodeURIComponent(url); },
+                            jsonStringify: function (jsonobj) { return encodeURIComponent(JSON.stringify(this)); }
+                        }
+                        });
+                    if(!isNaN(err))
+                    console.log('Error: ' + err);
+                });
+            })
+                if(!isNaN(err))
+                console.log('Error: ' + err);
+                });         
+            });
+        });
+});
+
+router.get('/showIndividualComparison/:comparisonReport&:cachedVersion&:resultsArray&:sourceText', (req, res, next) => {
+    // console.log("Request is defined");
+     let comparisonReport=req.params.comparisonReport;
+     let cachedVersion=req.params.cachedVersion;
+     let statusResp=JSON.parse("["+req.params.resultsArray+"]");
+     let data=req.params.sourceText;
+    console.log("statusResp without parsing:: " + statusResp);
     clCloud.login(email,apikey,config.E_PRODUCT.Education,function getStatusCallback(resp,err){
-        clCloud.getProcessResults(transactionId,function(statusResp,err){
-            console.log(statusResp);
-            //res.setHeader('content-type', 'text/plain');
-            res.status(200).end(JSON.stringify(statusResp));
-            //res.write()
-            if(!isNaN(err))
-            console.log('Error: ' + err);
-        });         
-    } );
+        clCloud.getResultRawText(cachedVersion,function(rawTextResp,err){
+             //console.log("Received the comp resp"+ JSON.stringify(comparisonResp));
+             clCloud.getComparisonReport(comparisonReport,function(comparisonResp,err){
+                //render results here 
+                console.log("Received the raw text resp"+ rawTextResp);
+                res.render('resultspage', {
+                    title: 'Plagiarism Results',
+                    condition: false,
+                    username: req.session.username,
+                    fname: req.session.fname,
+                    lname: req.session.lname,
+                    responseArray: statusResp,
+                    comparisonArray: comparisonResp,
+                    rawText:rawTextResp,
+                    sourceText:data,
+                    helpers: {
+                        encodeU: function (url) { return encodeURIComponent(url); },
+                        jsonStringify: function (jsonobj) { return encodeURIComponent(JSON.stringify(this)); }
+                    }
+                });
+                //console.log('Result raw text: ' + rawTextresp);
+                if(!isNaN(err))
+                console.log('Error: ' + err);
+            });
+        });
+    });
 });

@@ -1,0 +1,56 @@
+<style>
+    .head1,.head2,.head3{
+        text-align:center;
+        border-bottom:1px solid #d2d7da;
+        font-size:20px;
+        padding-bottom:9px;
+        padding-top:9px;
+        margin-top:10px;
+        background-color:#616161;
+        color:#FFFFFF;
+    }
+
+
+    .col1,.col2,.col3{
+        background-color:#F1F1F1;
+    }
+
+    .col1 p,.col2 p,.col3 p{
+        margin:18px;
+        height:600px;
+    }
+</style>
+<script  type="text/javascript" src="/js/resultspage.js"> </script>
+<script type="text/javascript">
+    var client = new XMLHttpRequest();
+    client.open('GET',".../uploads/nk05-1537846292359.txt");
+    client.onreadystatechange = function() {
+        document.getElementById("suspect").innerHTML=client.responseText;
+    }
+    client.send();
+</script>
+<h1> {{ title }}</h1>
+<div class="myContainer">
+    <div class="head1 col-sm-2 col-xs-2" >
+    Links
+    </div>
+    <div class="head2 col-sm-5 col-xs-5">
+    Target
+    </div>
+    <div class="head3 col-sm-5 col-xs-5">
+    Source
+    </div>
+    <div class="col1 col-sm-2 col-xs-2" >
+    {{#if responseArray }}
+        {{#each responseArray }}
+                <p><a href="/documents/showIndividualComparison/{{encodeU this.ComparisonReport}}&{{encodeU this.CachedVersion}}&{{jsonStringify responseArray}}&{{../sourceText}}">{{this.URL}}</a></p>
+        {{/each}}
+    {{/if}}
+    </div>
+    <div class="col2 col-sm-5 col-xs-5">
+        <p>{{ rawText }}</p>
+    </div>
+    <div class="col3 col-sm-5 col-xs-5" id="source">
+        <p>{{sourceText}}</p>
+    </div>
+</div>
