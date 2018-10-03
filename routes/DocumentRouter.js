@@ -174,55 +174,55 @@ router.get('/showresults/:transactionId&:filename', (req, res, next) => {
     database.getDocumentContent(filename, function (err, data) {
         clCloud.login(email,apikey,config.E_PRODUCT.Education,function getStatusCallback(resp,err){
             clCloud.getProcessResults(transactionId,function(statusResp,err){
-                //console.log("Original status Response"+ statusResp);
-                //let result=JSON.stringify(statusResp);
-                //res.setHeader('content-type', 'text/plain');
-                //res.status(200).end(JSON.stringify(statusResp));
-                clCloud.getComparisonReport(statusResp[0].ComparisonReport,function(comparisonResp,err){
-                    //console.log(JSON.stringify(comparisonResp));
-                    clCloud.getResultRawText(statusResp[0].CachedVersion,function(rawTextResp,err){
-                        //console.log('Result raw text: ' + JSON.stringify(rawTextResp));
-                        //render results here 
-                    res.render('resultspage', {
-                        title: 'Plagiarism Results',
-                        condition: false,
-                        username: req.session.username,
-                        fname: req.session.fname,
-                        lname: req.session.lname,
-                        responseArray: statusResp,
-                        comparisonArray: comparisonResp,
-                        rawText:rawTextResp,
-                        fileName:filename,
-                        sourceText:data,
-                        helpers: {
-                            encodeU: function (url) { return encodeURIComponent(url); },
-                            jsonStringify: function (jsonobj) { return encodeURIComponent(JSON.stringify(this)); }
-                        }
+                if(JSON.stringify(statusResp) != '{}'){
+                    clCloud.getComparisonReport(statusResp[0].ComparisonReport,function(comparisonResp,err){
+                        clCloud.getResultRawText(statusResp[0].CachedVersion,function(rawTextResp,err){
+                            console.log('Comparison: ' + JSON.stringify(comparisonResp));
+                            res.render('resultspage', {
+                                title: 'Plagiarism Results',
+                                condition: false,
+                                username: req.session.username,
+                                fname: req.session.fname,
+                                lname: req.session.lname,
+                                responseArray: statusResp,
+                                comparisonArray: comparisonResp,
+                                rawText:rawTextResp,
+                                fileName:filename,
+                                sourceText:data,
+                                mArray:statusResp,
+                                identicalWords: comparisonResp.Identical,
+                                helpers: {
+                                    encodeU: function (url) { return encodeURIComponent(url); },
+                                    jsonStringify: function (jsonobj) { return encodeURIComponent(JSON.stringify(jsonobj)); },
+                                    getScore: function(jsonobj) { return jsonobj[0].Percents}
+                                }
+                            });
+                            if(!isNaN(err))
+                            console.log('Error: ' + err);
                         });
-                    if(!isNaN(err))
-                    console.log('Error: ' + err);
-                });
-            })
+                    })
+                }else{
+                    console.log("Empty response from server");
+                    res.status(200).end("Results not ready.. Check back later");
+                }
                 if(!isNaN(err))
                 console.log('Error: ' + err);
-                });         
-            });
+            });   
         });
+    });
 });
 
 router.get('/showIndividualComparison/:comparisonReport&:cachedVersion&:resultsArray&:sourceText', (req, res, next) => {
     // console.log("Request is defined");
      let comparisonReport=req.params.comparisonReport;
      let cachedVersion=req.params.cachedVersion;
-     let statusResp=JSON.parse("["+req.params.resultsArray+"]");
+     let statusResp=JSON.parse(req.params.resultsArray);
      let data=req.params.sourceText;
-    console.log("statusResp without parsing:: " + statusResp);
     clCloud.login(email,apikey,config.E_PRODUCT.Education,function getStatusCallback(resp,err){
         clCloud.getResultRawText(cachedVersion,function(rawTextResp,err){
-             //console.log("Received the comp resp"+ JSON.stringify(comparisonResp));
              clCloud.getComparisonReport(comparisonReport,function(comparisonResp,err){
                 //render results here 
-                console.log("Received the raw text resp"+ rawTextResp);
+                console.log("Received the raw text resp"+ JSON.stringify(comparisonResp));
                 res.render('resultspage', {
                     title: 'Plagiarism Results',
                     condition: false,
@@ -233,9 +233,12 @@ router.get('/showIndividualComparison/:comparisonReport&:cachedVersion&:resultsA
                     comparisonArray: comparisonResp,
                     rawText:rawTextResp,
                     sourceText:data,
+                    mArray:statusResp,
+                    identicalWords: comparisonResp.Identical,
                     helpers: {
                         encodeU: function (url) { return encodeURIComponent(url); },
-                        jsonStringify: function (jsonobj) { return encodeURIComponent(JSON.stringify(this)); }
+                        jsonStringify: function (jsonobj) { return encodeURIComponent(JSON.stringify(jsonobj)); },
+                        getScore: function(jsonobj) { return jsonobj[0].Percents}
                     }
                 });
                 //console.log('Result raw text: ' + rawTextresp);

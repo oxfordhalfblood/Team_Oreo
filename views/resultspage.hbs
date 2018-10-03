@@ -10,26 +10,77 @@
         color:#FFFFFF;
     }
 
-
     .col1,.col2,.col3{
         background-color:#F1F1F1;
+        height:600px;
+        overflow-y:scroll;
     }
 
     .col1 p,.col2 p,.col3 p{
-        margin:18px;
-        height:600px;
+        margin:10px;
+    }
+
+    .highlight{
+        background-color:yellow;
     }
 </style>
 <script  type="text/javascript" src="/js/resultspage.js"> </script>
 <script type="text/javascript">
-    var client = new XMLHttpRequest();
-    client.open('GET',".../uploads/nk05-1537846292359.txt");
-    client.onreadystatechange = function() {
-        document.getElementById("suspect").innerHTML=client.responseText;
+
+    window.onload = function(){
+        var innerHTMLSuspect="";
+        var innerHTMLSource="";
+        var prevIndex=0;
+        var prevIndexforSource=0;
+        {{#if identicalWords }}
+            {{#each identicalWords}}
+                innerHTMLSuspect += getSuspectText(prevIndex,{{this.SuWS}})+"<span class='highlight'> "+getSuspectText({{this.SuWS}},{{this.SuWE}})+"</span>";
+                innerHTMLSource += getSourceText(prevIndexforSource,{{this.SoWS}})+"<span class='highlight'> "+getSourceText({{this.SoWS}},{{this.SoWE}})+"</span>";
+                prevIndex={{this.SuWE}};
+                prevIndexforSource= {{this.SoWE}}
+            {{/each}}
+                innerHTMLSuspect += getSuspectText(prevIndex,sizeOfSource(`{{rawText}}`),`{{rawText}}`);
+                innerHTMLSource += getSourceText(prevIndex,sizeOfSource(`{{sourceText}}`),`{{sourceText}}`);
+                console.log("valueof innerHTMLSource"+innerHTMLSuspect);
+        {{/if}}
+        document.getElementById("suspectText").innerHTML=innerHTMLSuspect;
+        document.getElementById("sourceText").innerHTML=innerHTMLSource;
+        console.log("valueof innerHTMLSource"+innerHTMLSuspect);
     }
-    client.send();
+
+    function getSuspectText(start,end){
+        givenText=`{{rawText}}`;
+        rawText= givenText.split(/\s+/);
+        console.log("getText has Received::" + rawText);
+        var textToReturn="";
+        for(var i=start;i<end;i++){
+            textToReturn+=rawText[i]+" ";
+        }
+        console.log('getText Returns:'+textToReturn);
+        console.log('array length is '+ rawText.length);
+        return textToReturn;
+    }
+    
+    function getSourceText(start,end){
+        givenText=`{{sourceText}}`;
+        rawText= givenText.split(/\s+/);
+        console.log("getText has Received::" + rawText);
+        var textToReturn="";
+        for(var i=start;i<end;i++){
+            textToReturn+=rawText[i]+" ";
+        }
+        return textToReturn;
+    }
+    
+    function sizeOfSource(inpText){
+        var nText= inpText.split(/\s+/);
+        return nText.length;
+    }
+
+
+
 </script>
-<h1> {{ title }}</h1>
+<h1> {{ title }} : Score =  {{ getScore responseArray }} %</h1> 
 <div class="myContainer">
     <div class="head1 col-sm-2 col-xs-2" >
     Links
@@ -43,14 +94,14 @@
     <div class="col1 col-sm-2 col-xs-2" >
     {{#if responseArray }}
         {{#each responseArray }}
-                <p><a href="/documents/showIndividualComparison/{{encodeU this.ComparisonReport}}&{{encodeU this.CachedVersion}}&{{jsonStringify responseArray}}&{{../sourceText}}">{{this.URL}}</a></p>
+                <p><a href="/documents/showIndividualComparison/{{encodeU this.ComparisonReport}}&{{encodeU this.CachedVersion}}&{{jsonStringify ../mArray}}&{{encodeU ../sourceText}}">{{this.URL}}</a></p>
         {{/each}}
     {{/if}}
     </div>
     <div class="col2 col-sm-5 col-xs-5">
-        <p>{{ rawText }}</p>
+        <p id="suspectText">{{ rawText }}</p>
     </div>
     <div class="col3 col-sm-5 col-xs-5" id="source">
-        <p>{{sourceText}}</p>
+        <p id="sourceText">{{sourceText}}</p>
     </div>
 </div>
