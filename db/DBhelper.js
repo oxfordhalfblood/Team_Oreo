@@ -14,9 +14,9 @@ function Dbhelper() {
 }
 
 /* Functions on DOCUMENT table */
-Dbhelper.prototype.addDocument = function(username, filename, oldfilename, date, callback) {
-    let sql = "insert into DOCUMENT (username, filename, oldfilename, dateupld) VALUES (?, ?, ?, ?);";
-    let values = [username, filename, oldfilename, date];
+Dbhelper.prototype.addDocument = function(username, filename, oldfilename, date, transactionId, callback) {
+    let sql = "insert into DOCUMENT (username, filename, oldfilename, dateupld, transactionId) VALUES (?, ?, ?, ?,?);";
+    let values = [username, filename, oldfilename, date, transactionId];
 
     db.serialize(function() {
         db.run(sql, values, callback);
@@ -24,7 +24,7 @@ Dbhelper.prototype.addDocument = function(username, filename, oldfilename, date,
 };
 
 Dbhelper.prototype.getDocuments = function(username, callback) {
-    let sql = "select filename, oldfilename, dateupld from DOCUMENT  where username = ?;";
+    let sql = "select filename, oldfilename, dateupld, transactionId from DOCUMENT  where username = ?;";
     let values = [username];
 
     db.serialize(function() {
@@ -40,7 +40,8 @@ Dbhelper.prototype.getDocuments = function(username, callback) {
                     arr.push({
                         ["filename"]: row.filename,
                         ["oldfilename"]: row.oldfilename,
-                        ["date"]: d.toLocaleDateString() + " " + d.toLocaleTimeString()
+                        ["date"]: d.toLocaleDateString() + " " + d.toLocaleTimeString(),
+                        ["transactionId"]: row.transactionId
                     });
                 });
             }
