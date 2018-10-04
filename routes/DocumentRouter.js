@@ -177,7 +177,7 @@ router.get('/showresults/:transactionId&:filename', (req, res, next) => {
                 if(JSON.stringify(statusResp) != '{}'){
                     clCloud.getComparisonReport(statusResp[0].ComparisonReport,function(comparisonResp,err){
                         clCloud.getResultRawText(statusResp[0].CachedVersion,function(rawTextResp,err){
-                            console.log('Comparison: ' + JSON.stringify(comparisonResp));
+                            console.log('Results: ' + JSON.stringify(statusResp));
                             res.render('resultspage', {
                                 title: 'Plagiarism Results',
                                 condition: false,

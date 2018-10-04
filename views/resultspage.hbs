@@ -16,12 +16,28 @@
         overflow-y:scroll;
     }
 
-    .col1 p,.col2 p,.col3 p{
+    .col2 p,.col3 p{
         margin:10px;
+    }
+
+    .col1 p{
+        margin-top:10px;
+        margin-bottom:20px;
+        margin-left:5px;
+    }
+
+    .col1 p a{
+        text-decoration:none;
+        font-family:helvetica;
+        font-weight: bold;
     }
 
     .highlight{
         background-color:yellow;
+    }
+
+    .perc{
+        color: red;
     }
 </style>
 <script  type="text/javascript" src="/js/resultspage.js"> </script>
@@ -80,21 +96,21 @@
 
 
 </script>
-<h1> {{ title }} : Score =  {{ getScore responseArray }} %</h1> 
+<h1> {{ title }} : Score &nbsp;&nbsp; <span class="perc">{{ getScore responseArray }} % </span></h1> 
 <div class="myContainer">
     <div class="head1 col-sm-2 col-xs-2" >
     Links
     </div>
     <div class="head2 col-sm-5 col-xs-5">
-    Target
+    Possible copy from 
     </div>
     <div class="head3 col-sm-5 col-xs-5">
-    Source
+    Uploaded document
     </div>
     <div class="col1 col-sm-2 col-xs-2" >
     {{#if responseArray }}
         {{#each responseArray }}
-                <p><a href="/documents/showIndividualComparison/{{encodeU this.ComparisonReport}}&{{encodeU this.CachedVersion}}&{{jsonStringify ../mArray}}&{{encodeU ../sourceText}}">{{this.URL}}</a></p>
+                <p><a href="/documents/showIndividualComparison/{{encodeU this.ComparisonReport}}&{{encodeU this.CachedVersion}}&{{jsonStringify ../mArray}}&{{encodeU ../sourceText}}">{{this.Title}}</a></p>
         {{/each}}
     {{/if}}
     </div>
