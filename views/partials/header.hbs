@@ -34,13 +34,13 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="/">Homepage</a></li>
-                            <li><a href="/documents">Document</a></li>
-                            <li><a href="/User/settings">Settings</a></li>
+                            <li><a href="/Documents">Document</a></li>
+                            <li><a href="/User/settings/{{ username }}">Settings</a></li>
                             {{#if isAdmin}}
                                 <li><a href="/Admin/dashboard">Admin Dashboard</a></li>
                             {{/if}}
-                            <li><a href="">About</a></li>
+                            <li><a href="/AboutUs">About Us</a></li>
+                            <li><a href="/MeetUs">Meet Us</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="/User/logout">Logout</a></li>
                         </ul>
