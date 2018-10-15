@@ -11,10 +11,6 @@ module.exports = function(app, db){
     app.use('/User', router);
 };
 
-router.put('/:username', (req, res, next) => {
-    res.status(403).send("update on user not supported");
-});
-
 router.post('/register', (req, res, next) => {
     let user = req.body["username"];
     let fname = req.body["fname"];
@@ -88,24 +84,67 @@ router.post('/login', (req, res, next) => {
 	);
 });
 
+/* Delete a user and all associated data */
+router.post('/deleteUser/:user', (req, res, next) => {
+    if (req.session.username) {
+        let paramUser = req.params.user;
+
+        /* If user is not admin and are trying to delete another user that's not themselves */
+        if ((req.session.usertype !== "admin") && req.session.username !== paramUser) {
+            res.status(403).send("Only admin can delete other users.");
+            return;
+        }
+
+        database.deleteUser(paramUser, function(err) {
+            if (err) {
+                res.status(500).end("server error: " + err);
+                return;
+            }
+
+            /* If the user deleted themselves, then log them out and erase their session */
+            if (paramUser === req.session.username) {
+                /* Destroy session uuid and redirect user to login page */
+                req.session.destroy(function () {
+                    res.redirect("/login");
+                });
+            } else {
+                res.status(200).send("deleted user: " + paramUser);
+            }
+        });
+    } else {
+        res.status(403).end("You are not logged in.");
+    }
+});
+
 /* Updating user's fullname */
-router.post('/SetFullName', (req, res, next) => {
+router.post('/SetFullName/:user', (req, res, next) => {
     if (req.session.username) {
         let fname = req.body["fname"];
         let lname = req.body["lname"];
 
-        database.updateUserFullname(req.session.username, fname, lname, function (err) {
+        let paramUser = req.params.user;
+
+        /* If user is not admin and are trying to change a username not of their own */
+        if ((req.session.usertype !== "admin") && req.session.username !== paramUser) {
+            res.status(403).send("Only admin can change another users full name.");
+            return;
+        }
+
+        database.updateUserFullname(paramUser, fname, lname, function (err) {
             if (err) {
                 console.log("Database error: " + err);
                 return;
             }
-            req.session.fname = fname;
-            req.session.lname = lname;
+            if (req.session.username === paramUser) {
+                /* Update their session details if they are changing their own username */
+                req.session.fname = fname;
+                req.session.lname = lname;
+            }
 
             let msg = "Updated full name to: " + fname + ", " + lname;
             console.log(msg);
 
-            res.status(200).redirect("/User/settings");
+            res.status(200).redirect("/User/settings/" + paramUser);
         });
     } else {
         res.status(403).end("You are not logged in.");
@@ -113,10 +152,18 @@ router.post('/SetFullName', (req, res, next) => {
 });
 
 /* Updating user's password */
-router.post('/SetPassword', (req, res, next) => {
+router.post('/SetPassword/:user', (req, res, next) => {
     if (req.session.username) {
         let p1 = req.body["new-password"];
         let p2 = req.body["confirm-new-password"];
+
+        let paramUser = req.params.user;
+
+        /* If user is not admin and are trying to change a password not of their own */
+        if ((req.session.usertype !== "admin") && req.session.username !== paramUser) {
+            res.status(403).send("Only admin can change another users password.");
+            return;
+        }
 
         /* Confirm password check */
         if (p1 !== p2) {
@@ -124,15 +171,15 @@ router.post('/SetPassword', (req, res, next) => {
             return;
         }
 
-        database.updateUserPassword(req.session.username, p1, function (err) {
+        database.updateUserPassword(paramUser, p1, function (err) {
             if (err) {
                console.log("Database error: " + err);
                return;
             }
-            let msg = "Updating " + req.session.username + "'s password to: " + p1;
+            let msg = "Updating " + paramUser + "'s password to: " + p1;
             console.log(msg);
 
-            res.status(200).redirect("/User/settings");
+            res.status(200).redirect("/User/settings/" + paramUser);
         });
     } else {
         res.status(403).end("You are not logged in.");
@@ -140,15 +187,52 @@ router.post('/SetPassword', (req, res, next) => {
 });
 
 /* User settings */
-router.get('/settings', (req, res, next) => {
+router.get('/settings/:user', (req, res, next) => {
     if (req.session.username) {
-        res.render('UserSettings', {
+
+        let paramUser = req.params.user;
+        let isAdmin = (req.session.usertype === "admin");
+        let renderVars = {
             title: 'Change User Settings',
+            actionOnUser: req.session.username,
             username: req.session.username,
             fname: req.session.fname,
             lname: req.session.lname,
-            isAdmin: (req.session.usertype === "admin")
-        });
+            isAdmin: isAdmin
+        };
+
+        if (!paramUser) {
+            res.status(403).send("requires username to get settings page.");
+            return;
+        }
+
+        /* Check if user is accessing a different user's settings page */
+        if(paramUser !== req.session.username) {
+            if (!isAdmin) {
+                /* If user is not admin, they can not view settings page for another user */
+                res.status(403).send("Unauthorised to get settings page of other users.");
+            } else {
+                /* It is admin and is viewing other user's settings page */
+
+                /* Get Data for the user of the settings page that the admin is viewing */
+                database.getUser(paramUser, function(err, rows) {
+                    if (!err) {
+                        renderVars["title"] = 'Change User Settings (as admin)';
+                        renderVars["actionOnUser"] = paramUser;
+                        renderVars["userInfo"] = {
+                            username: rows[0].username,
+                            fname: rows[0].fname,
+                            lname: rows[0].lname
+                        };
+                    }
+                    /* Render the page for the admin, with variables obtained from the user it is belonging to. */
+                    res.render('UserSettings', renderVars);
+                });
+            }
+        } else {
+            /* User is accessing their own settings page */
+            res.render('UserSettings', renderVars);
+        }
     } else {
         res.status(403).end("You are not logged in.");
     }

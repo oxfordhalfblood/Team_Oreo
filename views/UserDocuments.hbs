@@ -1,20 +1,27 @@
 
 <script  type="text/javascript" src="/js/DocumentsPage.js"> </script>
 
-<h1> {{ title }}</h1>
-<p> {{ title }} </p>
+
+{{#if userInfo }}
+    <h1>{{ userInfo.fname }} {{ userInfo.lname }}'s {{ title }}</h1>
+{{else}}
+    <h1>{{ fname }} {{ lname }}'s {{ title }}</h1>
+{{/if}}
+
+<p> {{ subtitle }} </p>
 
 <h3>Upload a new document</h3>
 <div>
     <form id="uploadForm" enctype="multipart/form-data" method="post">
         <input type="file" name="userFile" accept="text/plain"/>
         <br/>
-        Target Language : <select name="target_language">
+        <input type="submit" value="Upload File" name="submit">
+        <br/>
+        <br/>
+        <b>Target Language :</b> <select name="target_language">
             <option value="english">English</option>
             <option value="french">French</option>
         </select>
-        <input type="submit" value="Upload File" name="submit">
-      
     </form>
 </div>
 
@@ -34,8 +41,8 @@
                 <tr>
                     <td><a href="#" onclick="LoadFile('{{this.filename}}');">{{this.oldfilename}}</a></td>
                     <td>{{this.date}}</td>
-                    <td><a href="/documents/delete/{{this.filename}}">Remove</a></td>
-                    <td><a href="/documents/content/{{this.filename}}">view</a></td>
+                    <td><a href="#" onclick="deleteDocument('{{this.filename}}')">Remove</a></td>
+                    <!--<td><a href="/documents/content/{{this.filename}}">view</a></td>-->
                     <td><a href="/documents/showresults/{{this.transactionId}}&{{this.filename}}">Show results</a></td>
                 </tr>
             {{/each}}

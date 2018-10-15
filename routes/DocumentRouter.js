@@ -3,21 +3,27 @@ const bodyParser = require ('body-parser');
 const multer = require('multer');
 const fs = require('fs');
 const https = require('https');
-const formidable = require('formidable');
-const util = require('util');
+
+var sandbox_mode = true;    /* Set sandbox mode true */
+
+/* It's a bad idea to have credentials embedded into the source code,
+ * It should be passed in as command parameters or
+ * accessed via environment variables. But i guess it's fine.
+ */
 //copyleaks credentials
 var email = 'nipeshkc7@gmail.com';
 var apikey = 'AF14A871-CA6B-4FC9-8B78-38835EF0668F';
-var sandbox_mode = true;    /* Set sandbox mode true */
-
 
 //For the use of Copyleaks node sdk
 var CopyleaksCloud = require('plagiarism-checker');
 var clCloud = new CopyleaksCloud();
 var config = clCloud.getConfig();
 
-//Microsoft translate stuff
+/* Setup router stuff */
+const router = express.Router();
+router.use(bodyParser.json());
 
+//Microsoft translate stuff
 let subscriptionKey = 'ba896af047eb44d19ebb28a353a96da1';
 
 let get_guid = function () {
@@ -38,19 +44,11 @@ let request_params = {
     }
 };
 
-/* Setup router stuff */
-const router = express.Router();
-router.use(bodyParser.json());
-
 /* Populate locals with passed in modules */
 let database;
 module.exports = function(app, db) {
     database = db;
-    app.use('/documents', router);
-    app.use(bodyParser.urlencoded({
-        extended: true
-    }));
-    
+	app.use('/documents', router);
 };
 
 /* Setup file uploading */
@@ -68,7 +66,8 @@ let upload = multer({ storage: storage }).single('userFile');
 /* Define routes */
 router.all('/*', (req, res, next) => {
 	if (!req.session.username) {
-        res.status(403).end("You are not logged in.");
+        //res.status(403).end("You are not logged in.");
+        res.redirect("/login");
         return;
 	}
     res.statusCode = 200;
@@ -79,8 +78,9 @@ router.get('/', function (req, res, next) {
     let documents;
     database.getDocuments(req.session.username, function (result) {
         documents = result;
-        res.render('documentUpload', {
-            title: 'Upload documents here.',
+        res.render('UserDocuments', {
+            title: "Profile Page",
+            subtitle:'Upload and manage documents here.',
             condition: false,
             username: req.session.username,
             fname: req.session.fname,
@@ -186,22 +186,23 @@ router.post('/', (req, res, next) => {
             });
         }
     };
-upload(req, res, uploadCallback);
-          
+    upload(req, res, uploadCallback);
 });
 
-/* Delete a document.
-* Justification for using GET instead of DELETE:
-* I don't want to make a ajax call from client side.
-*
-* Has a security flaw where if a user can guess a filename, they can delete any document
-* not belonging to them, but this is fine since this is a non-srs project. */
-router.get('/delete/:filename', (req, res, next) => {
+/* Delete a document. */
+router.post('/delete/:filename', (req, res, next) => {
     let filename = req.params.filename;
     if (!filename) {
         res.status(304).send("filename is required to delete a document!");
         return;
     }
+
+    /* If user is not admin and are deleting a file not belonging to them */
+    if ((req.session.usertype !== "admin") && !filename.includes(req.session.username)) {
+        res.status(403).send("Can not delete documents not belonging to you.");
+        return;
+    }
+
     database.deleteDocument(filename, function (err) {
         if (err) {
             res.status(500).send("Error deleting document: " + err);
@@ -211,12 +212,17 @@ router.get('/delete/:filename', (req, res, next) => {
     });
 });
 
-/* Returns the contents of a file provided a filename
-* Has same security flaw as the function above. */
+/* Returns the contents of a file provided a filename */
 router.get('/content/:filename', (req, res, next) => {
     let filename = req.params.filename;
     if (!filename) {
         res.status(304).send("filename is required to get contents.");
+        return;
+    }
+
+    /* If user is not admin and are accessing a file not belonging to them */
+    if ((req.session.usertype !== "admin") && !filename.includes(req.session.username)) {
+        res.status(403).send("Can not get documents not belonging to you.");
         return;
     }
     database.getDocumentContent(filename, function (err, data) {
@@ -228,6 +234,7 @@ router.get('/content/:filename', (req, res, next) => {
         res.status(200).end(data);
     });
 });
+
 /* Saves content to file */
 router.put('/content/:filename', (req, res, next) => {
     let filename = req.params.filename;

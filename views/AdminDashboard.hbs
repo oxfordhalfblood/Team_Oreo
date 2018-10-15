@@ -1,13 +1,6 @@
 <h1>{{ title }}</h1>
-<!--
-see all user names, password and email in a table.
 
-uploaded documents of each user (maybe clicking on user name can take to that user's profile) @shane is doing user profile page
-
-remove a user from the system. Button "remove user" on the table
-
-make another user admin. Button "make admin"
--->
+<script  type="text/javascript" src="/js/AdminDashboard.js"> </script>
 
 <table class="table table-striped">
     <tr>
@@ -16,14 +9,34 @@ make another user admin. Button "make admin"
         <th>Lastname</th>
         <th>Usertype</th>
         <th>Password</th>
+        <th>Actions</th>
     </tr>
     {{#each users }}
         <tr>
-            <td>{{ this.username }} </td>
+            <td><a href="profile/{{this.username}}">{{this.username}}</a> </td>
             <td>{{ this.fname }}    </td>
             <td>{{ this.lname }}    </td>
             <td>{{ this.usertype }} </td>
             <td>{{ this.passwd }}   </td>
+
+            <td>
+                <div class="btn-group">
+                    <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        actions <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="/User/settings/{{this.username}}">Change Settings</a></li>
+                        <li><a href="profile/{{this.username}}">View Documents</a></li>
+                        <li role="separator" class="divider"></li>
+                        {{#if this.isAdmin }}
+                            <li><a href="#" onclick="setUserType('{{this.username}}','student')">Demote to Student</a></li>
+                        {{else}}
+                            <li><a href="#" onclick="setUserType('{{this.username}}','admin')">Promote to Admin</a></li>
+                        {{/if}}
+                        <li><a href="#" onclick="deleteUser('{{this.username}}')">Delete User</a></li>
+                    </ul>
+                </div>
+            </td>
         </tr>
     {{/each}}
 </table>

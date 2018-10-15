@@ -1,5 +1,3 @@
-/* Shamelessly using Shane's code because i'm a lazy. */
-
 let document_filename;
 let document_contents;
 
@@ -53,7 +51,7 @@ function saveContents() {
     }
 }
 
-//will be used to display files for comparison (not finished)
+/* Requests a file and displays it */
 function LoadFile(fname) {
     document_filename = null;
     $.ajax({
@@ -76,4 +74,33 @@ function LoadFile(fname) {
             alert('error');
         }
     });
+}
+
+/* Deletes a document */
+function deleteDocument(fname) {
+    if (fname) {
+        $.ajax({
+            url: '/documents/delete/' + fname,
+            contentType: "application/json",
+            type: 'POST',
+            async: true,
+            statusCode: {
+                304: function (res) {
+                    alert(response);
+                },
+                403: function (response) {
+                    alert(response);
+                },
+                200: function (response) {
+                    alert(response);
+                    window.location.reload(true);
+                }
+            },
+            error: function (jqXHR, status, errorThrown) {
+                alert('error');
+            }
+        });
+    } else {
+        alert("no filename?.");
+    }
 }
