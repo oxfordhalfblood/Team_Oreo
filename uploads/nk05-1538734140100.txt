@@ -1,0 +1,44 @@
+CSIT226/826 Human Computer Interaction Group Charter
+Directions
+Groups work better when members have a common understanding of the group’s goals and the ground rules for group activities. The purpose of this exercise is to help your group set some ground rules and goals.
+Each member of your group will have some idea how the group should operate. This is the opportunity to share your thoughts so “simple misunderstandings” are less likely to arise in the future.
+
+"GigCommunity"
+
+Our ground rules
+	Other than in class, when will we attempt to meet (what time, how often)?
+    Once a week every friday at 12:30pm
+    
+	On average, how long should our meetings be?
+    Aproproximately 1 hour
+    
+	Where will our meetings take place?
+    Building 3 lobby
+    
+	When is it OK to miss a meeting?
+    Sick/Earthquake/Global disaster
+    
+	How do we inform each other when we can’t be there or are running late?
+    Messenger group
+    
+	How will we deal with lateness to meetings?
+    Group discussion unless valid reason supplied
+    
+	What does “on time” mean?
+    Within 5 minutes either side of the meeting start time
+    
+	How do we deal with members who don’t participate enough, participate too much or distract the group from its task?
+    Discuss strategies on how we can overcome this behaviour
+    
+	How are we going to make decisions?
+    Vote
+    
+	What will we do if a group member’s work doesn’t meet our standards?
+    Take time to bring them up to speed on the work that needs to be accomplished
+
+Our goals
+	What is our group trying to accomplish?
+    Design a highly usable, highy functional interface for the freelancing community
+    
+	What is the overall mark that our group is trying to accomplish?
+    HD
