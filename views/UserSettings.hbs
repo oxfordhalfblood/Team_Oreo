@@ -1,13 +1,20 @@
+{{#if userInfo }}
+    <h1>{{ userInfo.fname }} {{ userInfo.lname }}'s {{ title }}</h1>
+{{else}}
+    <h1>{{ fname }} {{ lname }}'s {{ title }}</h1>
+{{/if}}
 
-<h1>{{ title }}</h1>
+
 
 <h2>Change Fullname</h2>
-<form id="name-form" action="/User/SetFullName" method="post" role="form">
+<form id="name-form" action="/User/SetFullName/{{actionOnUser}}" method="post" role="form">
     <div class="form-group">
-        <input type="text" name="fname" id="fname" class="form-control" placeholder="First name" value="{{fname}}">
+        <input type="text" name="fname" id="fname" class="form-control" placeholder="First name"
+               value="{{#if userInfo}}{{userInfo.fname}}{{else}}{{fname}}{{/if}}">
     </div>
     <div class="form-group">
-        <input type="text" name="lname" id="lname" class="form-control" placeholder="Last name" value="{{lname}}">
+        <input type="text" name="lname" id="lname" class="form-control" placeholder="Last name"
+               value="{{#if userInfo}}{{userInfo.lname}}{{else}}{{lname}}{{/if}}">
     </div>
     <div class="form-group">
         <div class="row">
@@ -21,7 +28,7 @@
 <br/>
 
 <h2>Change Password</h2>
-<form id="passwd-form" action="/User/SetPassword" method="post" role="form">
+<form id="passwd-form" action="/User/SetPassword/{{actionOnUser}}" method="post" role="form">
     <div class="form-group">
         <input type="password" name="new-password" class="form-control" placeholder="New Password">
     </div>

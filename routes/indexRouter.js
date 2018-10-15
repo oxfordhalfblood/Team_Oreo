@@ -15,14 +15,6 @@ module.exports = function(app, ss) {
 	session = ss;
 };
 
-const links = ["dbtest", "documents", "login"];
-
-router.all((req, res, next) => {
-    res.statusCode = 200;
-    //res.setHeader('content-type', 'text/plain');
-    next()
-});
-
 router.all('/', (req, res, next) => {
     /* Setup any rendering variables or whatever.. */
     res.statusCode = 200;
@@ -32,7 +24,6 @@ router.all('/', (req, res, next) => {
 router.get('/login', function(req, res, next) {
     res.render('login', {
         title: 'login/register',
-        anyArray: links,
         username: req.session.username,
         fname: req.session.fname,
         lname: req.session.lname,
@@ -41,9 +32,12 @@ router.get('/login', function(req, res, next) {
 });
 
 router.get('/', function (req, res, next) {
-    res.render('index', {
-        title: 'NoDupli Index',
-        anyArray: links,
+    res.redirect("/documents");
+});
+
+router.get('/AboutUs', function(req, res, next) {
+    res.render('AboutUs', {
+        title: 'About Us',
         username: req.session.username,
         fname: req.session.fname,
         lname: req.session.lname,
@@ -51,3 +45,12 @@ router.get('/', function (req, res, next) {
     });
 });
 
+router.get('/MeetUs', function(req, res, next) {
+    res.render('MeetUs', {
+        title: 'Meet Us',
+        username: req.session.username,
+        fname: req.session.fname,
+        lname: req.session.lname,
+        isAdmin: (req.session.usertype === "admin")
+    });
+});

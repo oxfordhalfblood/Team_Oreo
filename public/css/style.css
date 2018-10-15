@@ -36,6 +36,10 @@ a.navbar-brand {
     color:#fff;
 }
 
+.nav .open>a, .nav .open>a:focus, .nav .open>a:hover {
+    background-color: #0E69DE !important;
+}
+
 /* Colorise buttons */
 .btn{
     background-color: #07418c !important;
@@ -51,4 +55,22 @@ a.navbar-brand {
     color: #fff;
     background-color: #062e63 !important;
     border-color: #07418c !important;
+}
+
+html, body {
+    height: 100%;
+    background-color: #f0f0f0 !important;
+}
+
+/* Content */
+.container {
+    height: auto;
+    min-height: 50%;
+    width: 70% !important;
+    background-color: #FFFFFF;
+    border-color: #ccc;
+    -webkit-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+    -moz-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+    padding: 20px !important;
 }

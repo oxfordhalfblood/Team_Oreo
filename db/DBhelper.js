@@ -68,6 +68,31 @@ Dbhelper.prototype.deleteDocument = function(filename, callback) {
     });
 };
 
+Dbhelper.prototype.deleteAllDocuments = function(username, callback) {
+	/* Remove all physical files */
+	this.getDocuments(username, function(files) {
+		files.forEach( function(file) {
+			let filePath = path.join(__dirname, '..', 'uploads', file["filename"]);
+			fs.unlinkSync(filePath);
+		});
+	});
+
+	/* Remove database entries for those documents */
+    let sql = `delete from DOCUMENT where username= ?;`;
+    let values = username;
+
+    db.serialize(function() {
+        db.run(sql, values, function (err) {
+            if (err) {
+                callback(err);
+				return;
+            } else {
+                callback(false);
+            }
+        });
+    });
+};
+
 /* This shouldn't be here but whatever..
 * Takes a filename to absolute path, reads the file contents, returns it to the callback
 * along with any errors that have occurred. Errors are handled in the callback so the server
@@ -108,12 +133,20 @@ Dbhelper.prototype.addUser = function(username, fname, lname, usertype, password
 };
 
 Dbhelper.prototype.deleteUser = function(username, callback) {
-    let sql = `delete from  USER where username = ?;`;
-    let values = username;
+	/* remove all associated documents for this user */
+	this.deleteAllDocuments (username, function(err) {
+		if (err) {
+			callback(err);	
+			return;
+		}
+		/* remove user */
+		let sql = `delete from USER where username = ?;`;
+		let values = username;
 
-    db.serialize(function() {
-        db.run(sql, values, callback);
-    });
+		db.serialize(function() {
+			db.run(sql, values, callback);
+		});
+	});
 };
 
 Dbhelper.prototype.updateUserFullname = function (username, fname, lname, callback) {
@@ -128,6 +161,15 @@ Dbhelper.prototype.updateUserFullname = function (username, fname, lname, callba
 Dbhelper.prototype.updateUserPassword = function (username, passwd, callback) {
     let sql = `update USER set passwd = ? where username = ?;`;
     let values = [passwd, username];
+
+    db.serialize(function() {
+        db.run(sql, values, callback);
+    });
+};
+
+Dbhelper.prototype.updateUserType = function (username, type, callback) {
+    let sql = `update USER set usertype = ? where username = ?;`;
+    let values = [type, username];
 
     db.serialize(function() {
         db.run(sql, values, callback);

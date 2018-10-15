@@ -1,8 +1,9 @@
 .panel-login {
 	border-color: #ccc;
+	/*
 	-webkit-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
 	-moz-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
-	box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+	box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);*/
 }
 
 .panel-login>.panel-heading {
@@ -78,7 +79,7 @@
 	padding: 14px 0;
 	text-transform: uppercase;
 	margin-top: 10px;
-	
+
 }
 
 .dropdown-menu.settings{
