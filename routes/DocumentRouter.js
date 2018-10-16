@@ -1,7 +1,11 @@
 const express = require ('express');
 const bodyParser = require ('body-parser');
-const path = require('path');
 const multer = require('multer');
+const fs = require('fs');
+const https = require('https');
+
+var sandbox_mode = true;    /* Set sandbox mode true */
+
 
 /* It's a bad idea to have credentials embedded into the source code,
  * It should be passed in as command parameters or
@@ -19,6 +23,27 @@ var config = clCloud.getConfig();
 /* Setup router stuff */
 const router = express.Router();
 router.use(bodyParser.json());
+
+//Microsoft translate stuff
+let subscriptionKey = 'ba896af047eb44d19ebb28a353a96da1';
+
+let get_guid = function () {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+}
+
+let request_params = {
+    method : 'POST',
+    hostname : 'api.cognitive.microsofttranslator.com',
+    path : '/translate?api-version=3.0&to=fr',
+    headers : {
+        'Content-Type' : 'application/json',
+        'Ocp-Apim-Subscription-Key' : subscriptionKey,
+        'X-ClientTraceId' : get_guid (),
+    }
+};
 
 /* Populate locals with passed in modules */
 let database;
@@ -71,7 +96,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/', (req, res, next) => {
-    upload(req, res, function(err) {
+    let uploadCallback = function(err) {
         if (err){
             console.log(err);
             res.status(500).send("File upload failed!");
@@ -81,37 +106,88 @@ router.post('/', (req, res, next) => {
             res.status(500).send("No file selected!");
             return;
         }
-
-        /* Store a database record of the uploaded file */
-        let date = new Date;
-
-        clCloud.login(email,apikey,config.E_PRODUCT.Education,function (resp,err){
-            //Setting headers
-            var _customHeaders = {};
-            _customHeaders[config.SANDBOX_MODE_HEADER] = true; // Sandbox mode - Scan without consuming any credits and get back dummy results
-
-            /* Create a process using a file  */
-            clCloud.createByFile('./uploads/'+req.file.filename,_customHeaders,function(resp,err){
-                if(resp && resp.ProcessId){
-                    console.log('API: create-by-file');
-                    console.log('Process has been created: '+resp.ProcessId);
-                    //updating transaction Id to database
-                    database.addDocument(req.session.username, req.file.filename, req.file.originalname, date.toISOString(),resp.ProcessId, function (err) {
-                        if(err) {
-                            console.log("Database error: " + err);
-                            return;
-                        }
-                        console.log("Uploaded: " + req.file.filename);
-                        res.redirect("/documents");
-                        res.end("File is uploaded");
-                    });
+        if(req.body.target_language=="french"){
+            console.log("text is in french");
+            fs.readFile('./uploads/'+req.file.filename, 'utf8', function (err,data) {
+                if (err) {
+                return console.log(err);
                 }
-                    if(!isNaN(err))
-                        console.log('Error: ' + err);
+                let translate_request= https.request(request_params, function (response) {
+                    let body = '';
+                    response.on ('data', function (d) {
+                        body += d;
+                    });
+                    response.on ('end', function () {
+                        let json = JSON.stringify(JSON.parse(body), null, 4);
+                        let jsonp=JSON.parse(json);
+                        console.log(JSON.stringify(jsonp[0].translations[0].text));
+                        var result = jsonp[0].translations[0].text;
+                        fs.writeFile('./uploads/'+req.file.filename, result, 'utf8', function (err) {
+                            if (err) return console.log(err);
+                            let date = new Date;
+                            clCloud.login(email,apikey,config.E_PRODUCT.Education,function (resp,err){
+                                //Setting headers
+                                var _customHeaders = {};
+                                _customHeaders[config.SANDBOX_MODE_HEADER] = sandbox_mode; // Sandbox mode - Scan without consuming any credits and get back dummy results
+                                /* Create a process using a file  */
+                                clCloud.createByFile('./uploads/'+req.file.filename,_customHeaders,function(resp,err){
+                                    if(resp && resp.ProcessId){
+                                        console.log('API: create-by-file');
+                                        console.log('Process has been created: '+resp.ProcessId);
+                                        //updating transaction Id to database
+                                        database.addDocument(req.session.username, req.file.filename, req.file.originalname, date.toISOString(),resp.ProcessId, function (err) {
+                                            if(err) {
+                                                console.log("Database error: " + err);
+                                                return;
+                                            }
+                                            console.log("Uploaded: " + req.file.filename);
+                                            res.redirect("/documents");
+                                            res.end("File is uploaded");
+                                        });
+                                    }
+                                        if(!isNaN(err))
+                                            console.log('Error: ' + err);
+                                });
+                            });
+                        });
+                    });
+                    response.on ('error', function (e) {
+                        console.log ('Error: ' + e.message);
+                    });
+                });
+                translate_request.write(JSON.stringify ([{'Text' : data}]));
+                translate_request.end();
             });
-
-        });
-    });
+        }else if(req.body.target_language=="english"){
+            console.log("text is in english");        
+            let date = new Date;
+            clCloud.login(email,apikey,config.E_PRODUCT.Education,function (resp,err){
+                //Setting headers
+                var _customHeaders = {};
+                _customHeaders[config.SANDBOX_MODE_HEADER] = sandbox_mode; // Sandbox mode - Scan without consuming any credits and get back dummy results
+                /* Create a process using a file  */
+                clCloud.createByFile('./uploads/'+req.file.filename,_customHeaders,function(resp,err){
+                    if(resp && resp.ProcessId){
+                        console.log('API: create-by-file');
+                        console.log('Process has been created: '+resp.ProcessId);
+                        //updating transaction Id to database
+                        database.addDocument(req.session.username, req.file.filename, req.file.originalname, date.toISOString(),resp.ProcessId, function (err) {
+                            if(err) {
+                                console.log("Database error: " + err);
+                                return;
+                            }
+                            console.log("Uploaded: " + req.file.filename);
+                            res.redirect("/documents");
+                            res.end("File is uploaded");
+                        });
+                    }
+                        if(!isNaN(err))
+                            console.log('Error: ' + err);
+                });              
+            });
+        }
+    };
+    upload(req, res, uploadCallback);
 });
 
 /* Delete a document. */
